@@ -1,8 +1,10 @@
-const { Client } = require("discord.js");
+const { Client, Collection } = require("discord.js"); const client = new Client({ intents: 517 });
 const { token } = require("./config.json");
 
-const client = new Client({ intents: 1 });
+client.commands = new Collection();
 
-require('./utils/handlers/eventUtil.js')(client);
+['eventUtil', 'commandUtil'].forEach(handler => {
+    require(`./utils/handlers/${handler}.js`)(client);
+});
 
 client.login(token);

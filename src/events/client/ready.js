@@ -1,7 +1,9 @@
+const { devGuildId } = require('../../config.json');
+
 module.exports = {
     name: 'ready',
     once: true,
-    execute(client) {
+    async execute(client) {
         client.user.setActivity(
             '/help | Morue salée',
             {
@@ -9,5 +11,12 @@ module.exports = {
             }
         );
         console.log(`${client.user.username} est en ligne.`);
+        
+        // Instantané
+        const devGuild = await client.guilds.cache.get(devGuildId);
+        devGuild.commands.set(client.commands.map(command => command));
+
+        // Global (1h min.)
+        //TODO: Global slash commands push
     }
 }
