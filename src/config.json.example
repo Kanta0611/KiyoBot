@@ -1,0 +1,7 @@
+{
+    "token":"YOUR-TOKEN",
+    "devGuildId":"YOUR-DEV-GUILD",
+    "defaults": {
+        "prefix": "YOUR-PREFIX"
+    }
+}

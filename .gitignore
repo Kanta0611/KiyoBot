@@ -1,5 +1,5 @@
-# Private data
-config.json
+# Config
+**/config.json
 
 # Logs
 logs
