@@ -7,4 +7,6 @@ client.commands = new Collection();
     require(`./utils/handlers/${handler}.js`)(client);
 });
 
+process.on('unhandledRejection', (reason, promise) => {console.log(`UNHANDLED_REJECTION : ${reason}\n`, promise)});
+
 client.login(token);

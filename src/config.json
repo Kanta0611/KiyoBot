@@ -3,5 +3,11 @@
     "devGuildId":"939563407798046771",
     "defaults": {
         "prefix": "k!"
+    },
+    "colors": {
+        "base": 8155763,
+        "error": 16653056,
+        "warning": 16016923,
+        "success": 1488974
     }
 }
