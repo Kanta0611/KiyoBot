@@ -4,8 +4,8 @@ database.db
 # Test file
 test.py
 
-# assets
-dbscheme.drawio
+# Assets
+private/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
