@@ -1,5 +1,5 @@
 # Database
-database.db
+database/
 
 # Test file
 test.py
