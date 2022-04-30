@@ -4,39 +4,8 @@ from discord.ext import commands
 from sqlite3 import connect
 from datetime import datetime
 from os import getenv
-
-colorList = [
-    OptionChoice("Rouge", 0xF00020),
-    OptionChoice("Vert", 0x008020),
-    OptionChoice("Bleu", 0x0E4BEF),
-    OptionChoice("Jaune", 0xFEE347),
-    OptionChoice("Mauve", 0x9370DB),
-    OptionChoice("Blanc", 0xFEFEFE),
-    OptionChoice("Gris", 0x7F7F7F)
-]
-
-class Player():
-    def __init__(self, request: list):
-        self.p_id: int = request[0]
-        self.dsc_uid: str = request[1]
-        self.color: int = request[2] if request[2] is not None else int(getenv("DEFAULT_COLOR"), 16)
-        self.desc: str = request[3] if request[3] is not None else ''
-        self.img: str = request[4] if request[4] is not None else ''
-        self.xp: int = request[5]
-        self.level: int = request[6]
-        self.money: int = request[7]
-        self.currentHP: int = request[8]
-        self.maxHP: int = request[9]
-        self.currentMP: int = request[10]
-        self.maxMP: int = request[11]
-        self.currentEP: int = request[12]
-        self.maxEP: int = request[13]
-        self.physicalForce: int = request[14]
-        self.magicForce: int = request[15]
-        self.physicalResistance: int = request[16]
-        self.magicResistance: int = request[17]
-        self.speed: int = request[18]
-        self.freeStatPoints: int = request[19]
+from utils.classes.Player import Player
+from utils.optionLists.colorList import colorList
 
 class Profile(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -58,9 +27,10 @@ class Profile(commands.Cog):
             required=False,
             default=None
         )):
-        db = connect("database/database.db")
         if member is None:
             member = ctx.author
+
+        db = connect("database/database.db")  
 
         player = db.cursor().execute(f"SELECT * FROM player WHERE dsc_uid = \"{member.id}\"").fetchall()
         
@@ -73,8 +43,8 @@ class Profile(commands.Cog):
         profileEmbed = Embed(title=f"Profil de {member.display_name}", color=player.color, description=player.desc)
         profileEmbed.set_image(url=player.img)
         
-        profileEmbed.add_field(name="** **", value=f"⏫ **Niveau** `{player.level}`\n✨ **Exp :** `{player.xp}/{ceil(100 * (1.15 ** player.level))}`\n🪙 **Argent :** `{player.money}`\n\n❤️ **PV :** `{player.currentHP}/{player.maxHP}`\n🌀 **PM :** `{player.currentMP}/{player.maxMP}`\n💪🏻 **PE :** `{player.currentEP}/{player.maxEP}`", inline=True)
-        profileEmbed.add_field(name="** **", value=f"🤜🏻 **Force Physique :** `{player.physicalForce}`\n💥 **Force Magique :** `{player.magicForce}`\n\n🖐🏻 **Résistance Physique :** `{player.physicalResistance}`\n🛡️ **Résistance Magique :** `{player.magicResistance}`\n\n💨 **Vitesse :** `{player.speed}`", inline=True)
+        profileEmbed.add_field(name="** **", value=f"⏫ **Niveau** {player.level}\n✨ **Exp :** {player.xp}/{ceil(100 * (1.15 ** player.level))}\n🪙 **Argent :** {player.money}p\n\n❤️ **PV :** {player.currentHP}/{player.maxHP}\n🌀 **PM :** {player.currentMP}/{player.maxMP}\n💪🏻 **PE :** {player.currentEP}/{player.maxEP}", inline=True)
+        profileEmbed.add_field(name="** **", value=f"🤜🏻 **Force Physique :** {player.physicalForce}\n💥 **Force Magique :** {player.magicForce}\n\n🖐🏻 **Résistance Physique :** {player.physicalResistance}\n🛡️ **Résistance Magique :** {player.magicResistance}\n\n💨 **Vitesse :** {player.speed}", inline=True)
 
         profileEmbed.set_footer(text=f"KiyoBot | {player.freeStatPoints} points de stats à attribuer", icon_url=self.bot.user.avatar.url)
         
@@ -120,7 +90,7 @@ class Profile(commands.Cog):
 
         db.commit()    
 
-        await ctx.respond(embed=Embed(description = "Votre profil a été créé avec succès.", color=int(getenv("GREEN_COLOR"), 16), timestamp = datetime.utcnow()))
+        await ctx.respond(embed=Embed(description = "Votre profil a été créé avec succès.", color=int(getenv("GREEN_COLOR"), 16)))
 
     @profile.command(name="edit", description="📜 Modifie votre profil")
     async def edit(
@@ -164,7 +134,7 @@ class Profile(commands.Cog):
 
         db.commit()    
 
-        await ctx.respond(embed=Embed(description = "Votre profil a été modifié avec succès.", color=int(getenv("GREEN_COLOR"), 16), timestamp = datetime.utcnow()))
+        await ctx.respond(embed=Embed(description = "Votre profil a été modifié avec succès.", color=int(getenv("GREEN_COLOR"), 16)))
 
     @profile.command(name="delete", description="📜 Supprime votre profil")
     async def delete(self, ctx: commands.Context):
@@ -178,6 +148,7 @@ class Profile(commands.Cog):
         db.commit()
 
         await ctx.respond(embed=Embed(description = "Votre profil a été supprimé avec succès.", color=int(getenv("GREEN_COLOR"), 16), timestamp = datetime.utcnow()))
+    
 
 def setup(bot:commands.Bot):
     bot.add_cog(Profile(bot))

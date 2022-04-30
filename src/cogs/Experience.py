@@ -3,7 +3,7 @@ from random import randint
 from sqlite3 import connect
 from discord import Embed, Member, Message, Option, Permissions, SlashCommandGroup
 from discord.ext import commands
-from cogs.Profile import Player
+from utils.classes.Player import Player
 from os import getenv
 
 class Experience(commands.Cog):
@@ -14,7 +14,6 @@ class Experience(commands.Cog):
     
     @commands.Cog.listener()
     async def on_message(self, message: Message):
-        print("Euh : " + message.content)
         if message.content.startswith("(") or message.content.endswith(")") or len(message.content) < 40:
             return
 
