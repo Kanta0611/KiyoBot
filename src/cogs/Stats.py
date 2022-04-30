@@ -29,14 +29,6 @@ class Stats(commands.Cog):
             max_value=100
         )
     ):
-        realPoints = points
-
-        if stat == "p_hp":
-            realPoints *= 5
-        elif stat == "p_mp" or stat == "p_ep":
-            realPoints *= 3
-        elif stat == "p_speed":
-            realPoints *= 2
 
         db = connect("database/database.db")
 
@@ -58,10 +50,28 @@ class Stats(commands.Cog):
             await ctx.respond(embed = Embed(description=f"Vous n'avez pas assez de points de statistiques à distribuer.", color=int(getenv("RED_COLOR"), 16)), ephemeral=True)
             return
 
-        await ctx.respond(embed = Embed(description=f"{ctx.author.mention} s'est ajouté {realPoints} {statName}.", color=int(getenv("GREEN_COLOR"), 16)), ephemeral=True)
+        realPoints = points
 
-        # Ajouter stat au nombre de points de la statistique choisie et les retirer du nombre de stats libres
-        print(f"UPDATE player SET {stat} = {stat} + {realPoints}, p_statsFree = p_statsFree - {points} WHERE dsc_uid = \"{ctx.author.id}\"")
+        if stat == "p_hp":
+            realPoints *= 5
+        elif stat == "p_mp" or stat == "p_ep":
+            realPoints *= 3
+        elif stat == "p_speed":
+            realPoints *= 2
+
+        db.cursor().execute(f"UPDATE player SET {stat} = {stat} + {realPoints}, p_statsFree = p_statsFree - {points} WHERE dsc_uid = \"{ctx.author.id}\"")
+
+        if stat == "p_hp":
+            db.cursor().execute(f"UPDATE player SET p_chp = p_chp + {realPoints} WHERE dsc_uid = \"{ctx.author.id}\"")
+        elif stat == "p_mp":
+            db.cursor().execute(f"UPDATE player SET p_cmp = p_cmp + {realPoints} WHERE dsc_uid = \"{ctx.author.id}\"")
+        elif stat == "p_ep":
+            db.cursor().execute(f"UPDATE player SET p_cep = p_cep + {realPoints} WHERE dsc_uid = \"{ctx.author.id}\"")    
+
+        db.commit()
+
+        await ctx.respond(embed = Embed(description=f"{ctx.author.mention} s'est ajouté {realPoints} {statName.lower()}.", color=int(getenv("GREEN_COLOR"), 16)))
+        
 
 def setup(bot:commands.Bot):
     bot.add_cog(Stats(bot))
